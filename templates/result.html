@@ -2,40 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flood Prediction Result</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Flood Prediction Result</h1>
-
-        <div class="result-box">
-            <h2>Location Information</h2>
-            <p><strong>Location:</strong> {{ location }}</p>
-            <p><strong>Latitude:</strong> {{ latitude }}</p>
-            <p><strong>Longitude:</strong> {{ longitude }}</p>
-        </div>
-
-        <div class="weather-box">
-            <h2>Current Weather Data</h2>
-            {% if weather_data.error %}
-                <p>We're unable to retrieve weather data at this time. Please try again later or check the location entered.</p>
-            {% else %}
-                <p><strong>Temperature:</strong> {{ weather_data.temperature }} °F</p>
-                <p><strong>Precipitation:</strong> {{ weather_data.precipitation }} in</p>
-                <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
-                <p><strong>Description:</strong> {{ weather_data.description }}</p>
-            {% endif %}
-        </div>
-        
-
-        <div class="prediction-box">
-            <h2>Flood Prediction</h2>
-            <p>{{ prediction }}</p>
-        </div>
-
-        <a href="/" class="back-link">Back to Home</a>
-    </div>
+    <h1>Flood Prediction Result</h1>
+    <h2>Location Information</h2>
+    <p>Location: {{ location }}</p>
+    <p>Latitude: {{ latitude }}</p>
+    <p>Longitude: {{ longitude }}</p>
+    
+    <h2>Current Weather Data</h2>
+    {% if temperature != "N/A" %}
+        <p>Temperature: {{ temperature }}°C</p>
+        <p>Precipitation Probability: {{ precipitation }}%</p>
+        <p>Humidity: {{ humidity }}%</p>
+        <p>Wind Speed: {{ wind_speed }} m/s</p>
+    {% else %}
+        <p>Error: Could not retrieve weather data</p>
+    {% endif %}
+    
+    <h2>Flood Prediction</h2>
+    <p>Flood Risk: {{ flood_risk }}</p>
 </body>
 </html>
