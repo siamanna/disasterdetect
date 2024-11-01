@@ -2,69 +2,31 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 load_dotenv()
-api_key = os.getenv("VISUAL_CROSSING_API_KEY")
 
+# API endpoints and keys
+api_key = os.getenv("VISUAL_CROSSING_API_KEY")
+BASE_URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
 USGS_BASE_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Function to get weather data
+def get_weather_data(location):
+    url = f"{BASE_URL}/{location}"
+    params = {
+        "unitGroup": "metric",
+        "key": api_key,
+        "contentType": "json"
+    }
+    response = requests.get(url, params=params)
+    return response.json() if response.status_code == 200 else None
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    location = request.form.get('location')
-    latitude = request.form.get('latitude')
-    longitude = request.form.get('longitude')
-
-    # Use either location or coordinates for weather data
-    if latitude and longitude:
-        weather_data = get_weather_data(api_key, f"{latitude},{longitude}")
-    elif location:
-        weather_data = get_weather_data(api_key, location)
-    else:
-        return jsonify({"error": "Please provide a location or enable geolocation."})
-
-    # Check if weather_data was successfully retrieved
-    if weather_data is None:
-        return jsonify({"error": "Could not retrieve weather data. Please check your API key and location."})
-
-    # Extract necessary weather data
-    values = weather_data.get("data", {}).get("values", {})
-    temperature = values.get("temperature", "N/A")
-    precipitation = values.get("precipitationProbability", "N/A")
-    humidity = values.get("humidity", "N/A")
-    wind_speed = values.get("windSpeed", "N/A")
-
-    # Example flood risk prediction
-    flood_risk = "Low" if precipitation < 50 else "High"
-
-    # Render result page
-    return render_template(
-        'result.html',
-        location=location,
-        latitude=latitude,
-        longitude=longitude,
-        temperature=temperature,
-        precipitation=precipitation,
-        humidity=humidity,
-        wind_speed=wind_speed,
-        flood_risk=flood_risk
-    )
-
-
-def get_weather_data(api_key, location):
-    url = f"https://api.tomorrow.io/v4/weather/realtime?location={location}&apikey={api_key}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error fetching weather data: {response.status_code} - {response.text}")
-        return None
-
-def get_earthquake_data(start_date, end_date):
+# Function to get earthquake data
+def get_earthquake_data():
+    start_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+    end_date = datetime.now().strftime('%Y-%m-%d')
     params = {
         "format": "geojson",
         "starttime": start_date,
@@ -75,29 +37,45 @@ def get_earthquake_data(start_date, end_date):
         "maxlongitude": 101.2,
     }
     response = requests.get(USGS_BASE_URL, params=params)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error fetching earthquake data: {response.status_code}")
-        return None
+    return response.json() if response.status_code == 200 else None
 
-@app.route('/earthquake-data', methods=['POST'])
-def earthquake_data():
-    # Get the date range from the request
-    start_date = request.form.get('start_date')
-    end_date = request.form.get('end_date')
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    location = request.form.get('location') or "Myanmar"
+
+    # Fetch weather data
+    weather_data = get_weather_data(location)
+
+    # Example flood risk prediction logic
+    flood_risk = "Low"
+    if weather_data and "days" in weather_data:
+        today_weather = weather_data["days"][0]
+        flood_risk = "High" if today_weather.get("precip", 0) > 50 else "Low"
 
     # Fetch earthquake data
-    data = get_earthquake_data(start_date, end_date)
-    if data:
-        return jsonify(data)
-    else:
-        return jsonify({"error": "Could not retrieve earthquake data."})
+    earthquake_data = get_earthquake_data()
 
+    # Render the result page with all data
+    return render_template(
+        'result.html',
+        location=location,
+        latitude=weather_data["latitude"] if weather_data else "N/A",
+        longitude=weather_data["longitude"] if weather_data else "N/A",
+        temperature=weather_data["days"][0].get("temp", "N/A") if weather_data else "N/A",
+        precipitation=weather_data["days"][0].get("precip", "N/A") if weather_data else "N/A",
+        humidity=weather_data["days"][0].get("humidity", "N/A") if weather_data else "N/A",
+        wind_speed=weather_data["days"][0].get("windspeed", "N/A") if weather_data else "N/A",
+        flood_risk=flood_risk,
+        earthquake_data=earthquake_data["features"] if earthquake_data else []
+    )
 
-@app.route('/resources')
-def resources():
-    return render_template('resources.html')
+@app.template_filter('datetimeformat')
+def datetimeformat(value):
+    return datetime.fromtimestamp(value / 1000).strftime('%Y-%m-%d %H:%M:%S')
 
 if __name__ == "__main__":
     app.run(debug=True)

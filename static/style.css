@@ -151,3 +151,23 @@ p.error {
     color: #e74c3c;
     font-style: italic;
 }
+
+/* Earthquake section styling */
+.container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.container li {
+    background-color: #f4f4f9;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.container li strong {
+    color: #34495e;
+    font-weight: bold;
+}
+

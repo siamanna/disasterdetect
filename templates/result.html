@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flood Prediction Result</title>
+    <title>Disaster Prediction Result</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Flood Prediction Result</h1>
+        <h1>Disaster Prediction Result</h1>
         
         <h2>Location Information</h2>
         <p>Location: {{ location }}</p>
@@ -26,6 +26,21 @@
         
         <h2>Flood Prediction</h2>
         <p>Flood Risk: {{ flood_risk }}</p>
+
+        <h2>Recent Earthquakes</h2>
+        {% if earthquake_data %}
+            <ul>
+                {% for earthquake in earthquake_data %}
+                    <li>
+                        <strong>Magnitude:</strong> {{ earthquake.properties.mag }} <br>
+                        <strong>Location:</strong> {{ earthquake.properties.place }} <br>
+                        <strong>Time:</strong> {{ earthquake.properties.time | datetimeformat }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recent earthquake data available.</p>
+        {% endif %}
     </div>
 </body>
 </html>
