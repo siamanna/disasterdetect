@@ -32,6 +32,38 @@
                 return true; // Allow form submission
             }
         }
+
+        function fetchEarthquakeData() {
+            const startDate = document.getElementById("start_date").value;
+            const endDate = document.getElementById("end_date").value;
+
+            fetch('/earthquake-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ start_date: startDate, end_date: endDate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("earthquakeResults");
+                resultsDiv.innerHTML = '';
+
+                if (data.error) {
+                    resultsDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                } else {
+                    data.features.forEach(earthquake => {
+                        const mag = earthquake.properties.mag;
+                        const place = earthquake.properties.place;
+                        const time = new Date(earthquake.properties.time).toLocaleString();
+                        resultsDiv.innerHTML += `<p>Magnitude: ${mag} - Location: ${place} - Time: ${time}</p>`;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching earthquake data:', error);
+            });
+        }
     </script>
 </head>
 <body>
@@ -56,5 +88,18 @@
         <input type="submit" value="Check Risk"><br>
         <p id="warning-message" class="warning-message"></p>
     </form>
+
+    <form id="earthquakeForm" action="/earthquake-data" method="post">
+        <h2>Earthquake Data</h2>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required><br><br>
+    
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required><br><br>
+    
+        <button type="button" onclick="fetchEarthquakeData()">Get Earthquake Data</button>
+    </form>
+    
+    <div id="earthquakeResults"></div>
 </body>
 </html>
