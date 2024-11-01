@@ -3,31 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Flood Prediction Result</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Flood Prediction Result</h1>
-        
-        <h2>Location Information</h2>
-        <p>Location: {{ location }}</p>
-        <p>Latitude: {{ latitude }}</p>
-        <p>Longitude: {{ longitude }}</p>
-        
-        <h2>Current Weather Data</h2>
-        {% if weather_data %}
-            <p>Temperature: {{ weather_data['temperature'] }}°C</p>
-            <p>Precipitation: {{ weather_data['precipitationProbability'] }}%</p>
-            <p>Humidity: {{ weather_data['humidity'] }}%</p>
-            <p>Wind Speed: {{ weather_data['windSpeed'] }} m/s</p>
-        {% else %}
-            <p class="error">Error: Could not retrieve weather data</p>
-        {% endif %}
-        
-        <h2>Flood Prediction</h2>
-        <p class="flood-risk {% if flood_risk == 'High' %}high-risk{% else %}low-risk{% endif %}">
-            Flood Risk: {{ flood_risk }}
-        </p>
-    </div>
+    <h1>Flood Prediction Result</h1>
+    <h2>Location Information</h2>
+    <p>Location: {{ location }}</p>
+    <p>Latitude: {{ latitude }}</p>
+    <p>Longitude: {{ longitude }}</p>
+    
+    <h2>Current Weather Data</h2>
+    {% if temperature != "N/A" %}
+        <p>Temperature: {{ temperature }}°C</p>
+        <p>Precipitation Probability: {{ precipitation }}%</p>
+        <p>Humidity: {{ humidity }}%</p>
+        <p>Wind Speed: {{ wind_speed }} m/s</p>
+    {% else %}
+        <p>Error: Could not retrieve weather data</p>
+    {% endif %}
+    
+    <h2>Flood Prediction</h2>
+    <p>Flood Risk: {{ flood_risk }}</p>
 </body>
 </html>
