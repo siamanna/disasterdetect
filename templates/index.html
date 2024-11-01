@@ -18,23 +18,26 @@
             document.getElementById("latitude").value = position.coords.latitude;
             document.getElementById("longitude").value = position.coords.longitude;
         }
+
+        function validateForm() {
+            const locationInput = document.querySelector("input[name='location']");
+            const warningMessage = document.getElementById("warning-message");
+
+            if (locationInput.value.trim() === "") {
+                warningMessage.textContent = "Please provide a location or enable geolocation.";
+                warningMessage.style.display = "block";
+                return false; // Prevent form submission
+            } else {
+                warningMessage.style.display = "none";
+                return true; // Allow form submission
+            }
+        }
     </script>
 </head>
 <body>
     <h1>Disaster Alert App</h1>
-
-    <!-- Disaster Type Selection -->
-    <form action="/predict" method="post">
-        <label for="disaster-type">Select Disaster Type:</label>
-        <select name="disaster_type" id="disaster-type" required>
-            <option value="flood">Flood</option>
-            <option value="earthquake">Earthquake</option>
-            <option value="wildfire">Wildfire</option>
-            <!-- Add more disaster types as needed -->
-        </select><br><br>
-
-        <!-- Location Input -->
-        <label for="location">Enter Your City:</label>
+    <form action="/predict" method="post" onsubmit="return validateForm();">
+        <label for="location">Enter Your City in Myanmar:</label>
         <input type="text" name="location" placeholder="City name"><br><br>
 
         <label>Or, use your current location:</label>
@@ -43,7 +46,9 @@
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
 
-        <input type="submit" value="Check Risk">
+        <input type="submit" value="Check Risk"><br>
+        <!-- Warning message area -->
+        <p id="warning-message" class="warning-message"></p>
     </form>
 </body>
 </html>
