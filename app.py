@@ -62,5 +62,9 @@ def get_weather_data(api_key, location):
         print(f"Error fetching weather data: {response.status_code} - {response.text}")
         return None
 
+@app.route('/resources')
+def resources():
+    return render_template('resources.html')
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -36,8 +36,15 @@
 </head>
 <body>
     <h1>Disaster Alert App</h1>
+    
+    <!-- Navbar positioned below the header -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/resources">Resources</a>
+    </nav>
+
     <form action="/predict" method="post" onsubmit="return validateForm();">
-        <label for="location">Enter Your City:</label>
+        <label for="location">Enter Your City in Myanmar:</label>
         <input type="text" name="location" placeholder="City name"><br><br>
 
         <label>Or, use your current location:</label>
@@ -47,7 +54,6 @@
         <input type="hidden" id="longitude" name="longitude">
 
         <input type="submit" value="Check Risk"><br>
-        <!-- Warning message area -->
         <p id="warning-message" class="warning-message"></p>
     </form>
 </body>
