@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Detection App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/resources">Flood Resources</a></li>
+        </ul>
+    </nav>
+
+    <h1>Flood Detection App</h1>
+    <form action="/predict" method="post">
+        <!-- Form inputs go here -->
+        <label for="MonsoonIntensity">Monsoon Intensity:</label>
+        <input type="number" step="0.1" name="MonsoonIntensity" required><br><br>
+        
+        <!-- Additional form fields as shown previously -->
+
+        <input type="submit" value="Predict Flood Probability">
+    </form>
+</body>
+</html>
