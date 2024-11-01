@@ -1,34 +1,44 @@
-from flask import Flask, request, render_template
-import numpy as np
-import joblib
-
-# Load the model and scaler
-model = joblib.load('flood_rf_model.joblib')
-scaler = joblib.load('scaler.joblib')
+from flask import Flask, render_template, request, jsonify
+import requests
+import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
+api_key = os.getenv("VISUAL_CROSSING_API_KEY")
+BASE_URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # This should be an HTML form for input
-
-@app.route('/resources')
-def resources():
-    return render_template('resources.html')
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Extract features from form inputs
-    features = [float(request.form.get(f)) for f in request.form]
-    features = np.array(features).reshape(1, -1)
+    location = request.form.get('location')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
 
-    # Scale features
-    scaled_features = scaler.transform(features)
+    # Check for either location or coordinates
+    if latitude and longitude:
+        weather_data = get_weather_data(f"{latitude},{longitude}")
+    elif location:
+        weather_data = get_weather_data(location)
+    else:
+        return jsonify({"error": "Please provide a location or enable geolocation."})
 
-    # Predict flood probability
-    prediction = model.predict(scaled_features)
+    # Determine flood prediction based on weather data
+    prediction = "Flood Risk: TBD based on weather data."  # Update this with your prediction logic
 
-    return f"Predicted Flood Probability: {prediction[0]:.4f}"
+    return render_template('result.html', location=location, latitude=latitude, longitude=longitude, weather_data=weather_data, prediction=prediction)
 
-if __name__ == "__main__":
+def get_weather_data(api_key, location):
+    url = f"https://api.tomorrow.io/v4/weather/realtime?location={location}&apikey={api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+
+if __name__ == '__main__':
     app.run(debug=True)

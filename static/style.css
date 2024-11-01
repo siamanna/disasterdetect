@@ -1,29 +1,54 @@
-/* Navbar styling */
-nav {
-    width: 100%;
-    background-color: #4CAF50;
-    padding: 10px 0;
-}
-
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-nav ul li {
-    margin: 0 15px;
+.container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
 }
 
-nav ul li a {
-    color: white;
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 24px;
+    margin-top: 0;
+}
+
+.result-box, .weather-box, .prediction-box {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+h2 {
+    color: #444;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-align: center;
+    color: #007BFF;
     text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
 }
 
-nav ul li a:hover {
+.back-link:hover {
     text-decoration: underline;
 }
