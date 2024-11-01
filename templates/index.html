@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flood Detection App</title>
+    <title>Disaster Alert App</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <script>
         function getLocation() {
@@ -21,9 +21,20 @@
     </script>
 </head>
 <body>
-    <h1>Flood Detection App</h1>
+    <h1>Disaster Alert App</h1>
+
+    <!-- Disaster Type Selection -->
     <form action="/predict" method="post">
-        <label for="location">Enter Your City in Myanmar:</label>
+        <label for="disaster-type">Select Disaster Type:</label>
+        <select name="disaster_type" id="disaster-type" required>
+            <option value="flood">Flood</option>
+            <option value="earthquake">Earthquake</option>
+            <option value="wildfire">Wildfire</option>
+            <!-- Add more disaster types as needed -->
+        </select><br><br>
+
+        <!-- Location Input -->
+        <label for="location">Enter Your City:</label>
         <input type="text" name="location" placeholder="City name"><br><br>
 
         <label>Or, use your current location:</label>
@@ -32,9 +43,7 @@
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
 
-        <!-- Existing fields for model inputs go here -->
-
-        <input type="submit" value="Predict Flood Probability">
+        <input type="submit" value="Check Risk">
     </form>
 </body>
 </html>
